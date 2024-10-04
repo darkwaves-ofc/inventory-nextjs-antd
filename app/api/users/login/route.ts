@@ -18,11 +18,13 @@ export async function POST(request: NextRequest) {
     const user = await User.findOne({ name: reqBody.name });
     // console.log(reqBody.name)
     if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(reqBody.password, salt);
+
       if (reqBody.name === "admin") {
         const newUser = new User({
           name: reqBody.name,
-          password:
-            "$2a$10$OwT.utp3zyRrMaufMMWyOOvhGj1yMlgUdQNCHAbiRH6Ao70gmJ4xq",
+          password: hashedPassword,
           newProduct: true,
           returning: true,
           sold: true,
